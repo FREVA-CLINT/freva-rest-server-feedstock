@@ -191,8 +191,6 @@ create_opensearch_unit() {
     cat << EOF > $PREFIX/libexec/$PKG_NAME/scripts/init-opensearch
 #!/usr/bin/env bash
 CONDA_PREFIX=\$(readlink -f \${CONDA_PREFIX:-\$(dirname \$0)../../../)})
-DATA_DIR=\${API_DATA_DIR:-$PREFIX/var/$PKG_NAME/opensearch}
-LOG_DIR=\${API_LOG_DIR:-$PREFIX/var/log/$PKG_NAME}
 export OPENSEARCH_HOME=$PREFIX/libexec/opensearch
 export JAVA_HOME=$PREFIX
 set -o nounset -o pipefail -o errexit
@@ -215,11 +213,7 @@ if [ ! -d "\$OPENSEARCH_HOME/plugins/opensearch-index-management" ];then
     opensearch-plugin install --batch https://repo1.maven.org/maven2/org/opensearch/plugin/opensearch-index-management/2.19.1.0/opensearch-index-management-2.19.1.0.zip
 fi
 
-mkdir -p \$DATA_DIR \$LOG_DIR
 cp $PREFIX/share/$PKG_NAME/opensearch/opensearch.yml \$OPENSEARCH_PATH_CONF
-echo -e '\n## Persistent data and log location' >> \$OPENSEARCH_PATH_CONF/opensearch.yml
-echo path.data: \$DATA_DIR >> \$OPENSEARCH_PATH_CONF/opensearch.yml
-echo path.logs: \$LOG_DIR/opensearch.log >> \$OPENSEARCH_PATH_CONF/opensearch.yml
 EOF
     chmod +x $PREFIX/libexec/$PKG_NAME/scripts/init-opensearch
 }
